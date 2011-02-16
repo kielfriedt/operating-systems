@@ -1,0 +1,59 @@
+/*
+ *	Copyright (C) 2011  Kiel Friedt
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#! /bin/bash
+
+
+if ! test $# -eq 1 
+	then
+	echo -n 'Usage: crypto filename '
+elif ! test -e $1
+then
+echo -n 'Usage: crypto filename '
+elif test -d $1
+then
+echo -n  $1 'is not a regular file '
+else
+echo -n 'Please enter in a file name for output '
+read newfile
+while [ -z $newfile ] 
+do
+echo -n 'please enter in a file you want the results to be written to '
+read newfile
+done
+temp='temp'
+touch $newfile
+touch $temp
+one=100
+wordc=`tr -cd "[:alnum:]" < $1 | tr "[:upper:]" "[:lower:]" | sed s/[^a-z]/""/g | wc -m`
+echo
+i=0
+ARRAY=( 8.167 1.492 2.782 4.253 12.702 2.228 2.015 6.094 6.966 0.153 0.772 4.025 2.406 6.749 7.507 1.929 
+0.095 5.987 6.327 9.056 2.758 0.978 2.360 0.150 1.974 0.074 )
+for letters in a b c d e f g h i j k l m n o p q r s t u v w x y z
+do
+counter=`tr -cd "[:alnum:]" < $1 | tr "[:upper:]" "[:lower:]" | sed s/[^$letters]/""/g | wc -m`
+freq=`./calc $counter*$one/$wordc`
+echo 'There were' $counter $letters"'s which is" $freq'%' 'usually' ${ARRAY[${i}]}'%'	
+echo $freq $letters ${ARRAY[${i}]} >> $temp
+i=`expr $i + 1`
+done
+echo ' actual    usual' >> $newfile
+echo '_________________' >> $newfile
+sort -nr $temp >> $newfile
+rm temp
+fi
+
