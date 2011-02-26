@@ -14,6 +14,11 @@
  #    You should have received a copy of the GNU General Public License
  #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+# Modifies a image using image magick. Users can write a xml file containing what they want to have done to the image
+# or the system will search in the current directory for a xml file matching the same name. If it does find it then it will read it in
+# and allow the user to use that as the current settings or they can replace it with new settings. Once the modification is complete
+# it can write out the xml.
+#
 #! /usr/bin/perl -w
 use strict;
 use Image::Magick;
@@ -71,6 +76,7 @@ print "shear is set to $temparray[7] with X=$temparray[8] and Y=$temparray[9] an
 print "sharpen is set to $temparray[11]\n";
 }
 
+# Finds xml files in current directory
 sub searchxml {
 my $some = shift;
     my(@xml, $i, $temp);
@@ -121,6 +127,7 @@ else
 }
 }
 
+#takes current settings and modifys the image
 sub modifyImage {
 my $some = shift;
 my $image = new Image::Magick;
