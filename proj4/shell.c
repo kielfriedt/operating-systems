@@ -1,25 +1,25 @@
 /*
-*    Copyright (C) 2011  Kiel Friedt
-*
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
-*
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
-*/
+ *    Copyright (C) 2011  Kiel Friedt
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
 
 /*
-* This code implements a simple shell program
-* At this time it supports just simple commands with
-* any number of args.
-*/
+ * This code implements a simple shell program
+ * At this time it supports just simple commands with
+ * any number of args.
+ */
 
 #include &lt;stdio.h&gt;
 #include &lt;unistd.h&gt;
@@ -43,8 +43,8 @@ struct sigaction original_act, new_act;
 int magic[2];    //pipe variable
 
 /*
-* The main shell function
-*/
+ * The main shell function
+ */
 main() {
     char *buff[20];
     char *inputString;
@@ -100,7 +100,7 @@ main() {
                 }
             }
             else
-            chdir(getenv("HOME")); // home directory
+				chdir(getenv("HOME")); // home directory
             free(inputString);
             continue;
         }
@@ -114,8 +114,8 @@ main() {
 }
 
 /*
-* Do the command
-*/
+ * Do the command
+ */
 int do_command(char **buff)
 {
     int status, andflag, flag, x, inflag, outflag, fdin, fdout, pipeflag, total;
@@ -141,19 +141,19 @@ int do_command(char **buff)
     {
         total++;
         if(strcmp(buff[x], "&") == 0)
-        andflag = x;
+			andflag = x;
         if(strcmp(buff[x], "&lt;") == 0)
-        inflag = x;
+			inflag = x;
         if(strcmp(buff[x], "&gt;") == 0)
-        outflag = x;
+			outflag = x;
         if(strcmp(buff[x], "|") == 0)
-        pipeflag = x;
+			pipeflag = x;
         x++;
     }
     
     // get the flag total for special chars
     for(x = 0;x &lt; total; ++x)
-    flag += specialchar(buff[x]);
+		flag += specialchar(buff[x]);
     
     //child enters here
     if(child_id == 0)
@@ -162,57 +162,57 @@ int do_command(char **buff)
         switch(flag)
         {
             case 0: // No flags were set
-            //Ctrl-C allowed for this:
-            new_act.sa_handler = SIG_DFL;
-            sigaction(SIGINT, &new_act, NULL);
-            break;
+				//Ctrl-C allowed for this:
+				new_act.sa_handler = SIG_DFL;
+				sigaction(SIGINT, &new_act, NULL);
+				break;
             case 1: // &
-            buff[andflag] = NULL;
-            dup2((int)"/dev/null", 1);
-            break;
+				buff[andflag] = NULL;
+				dup2((int)"/dev/null", 1);
+				break;
             case 2: // &lt;
-            buff[inflag] = NULL;
-            exitflag = inputRedirection(buff[inflag+1]);
-            buff[inflag+1] = NULL;
-            break;
+				buff[inflag] = NULL;
+				exitflag = inputRedirection(buff[inflag+1]);
+				buff[inflag+1] = NULL;
+				break;
             case 4: //&gt;
-            buff[outflag] = NULL;
-            exitflag = outputRedirection(buff[outflag+1]);
-            buff[outflag+1] = NULL;
-            break;
+				buff[outflag] = NULL;
+				exitflag = outputRedirection(buff[outflag+1]);
+				buff[outflag+1] = NULL;
+				break;
             case 6: //&lt;&gt;
-            buff[inflag] = NULL;
-            exitflag = inputRedirection(buff[inflag+1]);
-            buff[inflag+1] = NULL;
-            buff[outflag] = NULL;
-            exitflag = outputRedirection(buff[outflag+1]);
-            buff[outflag+1] = NULL;
-            break;
+				buff[inflag] = NULL;
+				exitflag = inputRedirection(buff[inflag+1]);
+				buff[inflag+1] = NULL;
+				buff[outflag] = NULL;
+				exitflag = outputRedirection(buff[outflag+1]);
+				buff[outflag+1] = NULL;
+				break;
             case 8:// |
-            piper2(buff, pipeflag);
-            return;
-            break;
+				piper2(buff, pipeflag);
+				return;
+				break;
             case 10: // &lt;|
-            buff[inflag] = NULL;
-            exitflag = inputRedirection(buff[inflag+1]);
-            buff[inflag+1] = NULL;
-            piper2(buff, pipeflag);
-            break;
+				buff[inflag] = NULL;
+				exitflag = inputRedirection(buff[inflag+1]);
+				buff[inflag+1] = NULL;
+				piper2(buff, pipeflag);
+				break;
             case 12: // |&gt;
-            buff[outflag] = NULL;
-            exitflag = outputRedirection(buff[outflag+1]);
-            buff[outflag+1] = NULL;
-            piper2(buff, pipeflag);
-            break;
+				buff[outflag] = NULL;
+				exitflag = outputRedirection(buff[outflag+1]);
+				buff[outflag+1] = NULL;
+				piper2(buff, pipeflag);
+				break;
             case 14: // &lt; | &gt;
-            buff[inflag] = NULL;
-            exitflag = inputRedirection(buff[inflag+1]);
-            buff[inflag+1] = NULL;
-            buff[outflag] = NULL;
-            exitflag = outputRedirection(buff[outflag+1]);
-            buff[outflag+1] = NULL;
-            piper2(buff, pipeflag);
-            break;
+				buff[inflag] = NULL;
+				exitflag = inputRedirection(buff[inflag+1]);
+				buff[inflag+1] = NULL;
+				buff[outflag] = NULL;
+				exitflag = outputRedirection(buff[outflag+1]);
+				buff[outflag+1] = NULL;
+				piper2(buff, pipeflag);
+				break;
         } // End of switch statement
         
         if(exitflag == 0){
@@ -221,7 +221,7 @@ int do_command(char **buff)
             exit(-1);
         }
         else
-        exit(0);
+			exit(0);
     } // End of child process
     else //beginning of "good" parents
     {
@@ -235,40 +235,40 @@ int do_command(char **buff)
         {
             waitpid(child_id, &status, 0);
             if ( WIFSIGNALED(status) )
-            printf("Child %ld terminated due to signal %d\n",(long)child_id, WTERMSIG(status) );
+				printf("Child %ld terminated due to signal %d\n",(long)child_id, WTERMSIG(status) );
         }
         else
         {
             waitpid(child_id, &status, 0);
             if ( WIFSIGNALED(status) )
-            printf("Child %ld terminated due to signal %d\n",(long)child_id, WTERMSIG(status) );
+				printf("Child %ld terminated due to signal %d\n",(long)child_id, WTERMSIG(status) );
             waitpid(child_id, &status, 0);
             if ( WIFSIGNALED(status) )
-            printf("Child %ld terminated due to signal %d\n",(long)child_id, WTERMSIG(status) );
+				printf("Child %ld terminated due to signal %d\n",(long)child_id, WTERMSIG(status) );
         }
         return;
     } //end of "good" parents
 }//end of do_command
 
 /*
-* Order: |, &gt;, &lt;, &
-* finds flag and returns value
-*/
+ * Order: |, &gt;, &lt;, &
+ * finds flag and returns value
+ */
 int specialchar(char *command)
 {
     int flag = 0;
     
     if(strcmp(command, "&") == 0)
-    flag += 1;
+		flag += 1;
     
     if(strcmp(command, "&lt;") == 0)
-    flag += 2;
+		flag += 2;
     
     if(strcmp(command,"&gt;") == 0)
-    flag += 4;
+		flag += 4;
     
     if(strcmp(command,"|") == 0)
-    flag += 8;
+		flag += 8;
     
     return flag;
 }
@@ -315,7 +315,7 @@ int outputRedirection(char *fileName)
 {
     int fd;
     if((fd = open(fileName, O_CREAT|O_WRONLY, 0700)) == -1)
-    return 1;
+		return 1;
     dup2(fd,1);
     close(fd);
     return 0;

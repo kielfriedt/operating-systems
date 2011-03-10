@@ -52,71 +52,71 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <ctype.h>
- 
+
 void *get_my_args(char *buff[]) {
-   int bytes_read;
-   size_t MAX_BYTES = 100;
-   size_t nbytes = MAX_BYTES+2;
-   int MAX_TOKENS = 20;
-   char *my_string;
-   int i=0;
-   int token=0;
-
-   // malloc enough space for a MAX_BYTES character line
-   my_string = (char *)malloc(nbytes + 1);
-   if(my_string == NULL) { // did malloc fail?
-       return NULL;
-   }
-   
-   bytes_read = getline (&my_string, &nbytes, stdin);
-   
-   if(bytes_read == -1) {
-       free(my_string); // free up the space -- no memory leaks!
-       fprintf(stderr, "getline failed\n");
-       return NULL;
-   }
-   if(bytes_read > MAX_BYTES+1) {
-      free(my_string); // free up the space
-      fprintf(stderr, "Too many characters in command\n");
-      return NULL;
-   }
-   
-   do {
-      // eat up space and tab characters
-      while(my_string[i]==' ' || my_string[i]=='\t') {
-          my_string[i]='\0';
-          i++;
-      }
-
-      // OK, we have a char that isn't a space or a tab--is it a newline? 
-      if(my_string[i]=='\n'){ 
-          if(token > MAX_TOKENS) {
-		      free(my_string);
-              fprintf(stderr, "Too many arguments in command\n");
-              return NULL;
-          }
-          //replace \n with \0
-          my_string[i]='\0';
-		  
-          //end token string with NULL so that execvp will work
-		  buff[token]=NULL;
-		  
-		  // return the pointer to the malloced memory so that we can free it
-          return my_string;
-      }
-	  
-      //char not a newline. It must be the start of new token.
-      buff[token]=&my_string[i];
-	  token++;
-	  i++;
-      
-      // eat up the rest of the characters in this token 
-      // isgraph determines if a character is printable and a non-space
-	  while( isgraph(my_string[i]) && my_string[i] != '\n' ) {
-          i++;
-      }
-	  
-  }    
-  while(1);
-      
+	int bytes_read;
+	size_t MAX_BYTES = 100;
+	size_t nbytes = MAX_BYTES+2;
+	int MAX_TOKENS = 20;
+	char *my_string;
+	int i=0;
+	int token=0;
+	
+	// malloc enough space for a MAX_BYTES character line
+	my_string = (char *)malloc(nbytes + 1);
+	if(my_string == NULL) { // did malloc fail?
+		return NULL;
+	}
+	
+	bytes_read = getline (&my_string, &nbytes, stdin);
+	
+	if(bytes_read == -1) {
+		free(my_string); // free up the space -- no memory leaks!
+		fprintf(stderr, "getline failed\n");
+		return NULL;
+	}
+	if(bytes_read > MAX_BYTES+1) {
+		free(my_string); // free up the space
+		fprintf(stderr, "Too many characters in command\n");
+		return NULL;
+	}
+	
+	do {
+		// eat up space and tab characters
+		while(my_string[i]==' ' || my_string[i]=='\t') {
+			my_string[i]='\0';
+			i++;
+		}
+		
+		// OK, we have a char that isn't a space or a tab--is it a newline? 
+		if(my_string[i]=='\n'){ 
+			if(token > MAX_TOKENS) {
+				free(my_string);
+				fprintf(stderr, "Too many arguments in command\n");
+				return NULL;
+			}
+			//replace \n with \0
+			my_string[i]='\0';
+			
+			//end token string with NULL so that execvp will work
+			buff[token]=NULL;
+			
+			// return the pointer to the malloced memory so that we can free it
+			return my_string;
+		}
+		
+		//char not a newline. It must be the start of new token.
+		buff[token]=&my_string[i];
+		token++;
+		i++;
+		
+		// eat up the rest of the characters in this token 
+		// isgraph determines if a character is printable and a non-space
+		while( isgraph(my_string[i]) && my_string[i] != '\n' ) {
+			i++;
+		}
+		
+	}    
+	while(1);
+	
 }

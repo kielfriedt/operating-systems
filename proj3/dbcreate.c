@@ -20,13 +20,13 @@
  *	Date: Feb, 19 2010
  *
  *	Creates a database with specified paramaters
-*/
+ */
 
 #include "db.h"
 
 int db_create( char *file_name, int key_size, int data_size, int hash_size )
 {
-
+	
 	// If key_size is greater than DB_KEY_MAX, return -1 to indicate an error. 
 	if(key_size+1 > DB_KEY_MAX)
 	{
@@ -37,7 +37,7 @@ int db_create( char *file_name, int key_size, int data_size, int hash_size )
 	if(((unsigned int)strlen(file_name) + LOCK_EXT) > DB_PATH_MAX)
 	{
 		//printf("Path size was to big\n");
-	
+		
 		return -1;
 		
 	}
@@ -61,7 +61,7 @@ int db_create( char *file_name, int key_size, int data_size, int hash_size )
 	int i;
 	lseek( fd, FILE_INFO, SEEK_SET);
 	int z = 0;
-
+	
 	// Make the file 3 times biger than the hash size
 	for(i = 0; i < hash_size; i++)
 	{

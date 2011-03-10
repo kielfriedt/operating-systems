@@ -20,7 +20,7 @@
  *	Date: Feb, 19 2010
  *
  *	Opens the specified database.
-*/
+ */
 
 #include "db.h"
 
@@ -43,10 +43,10 @@ DB_FILE *db_open( char *file_name )
 	
 	// Get key_size
 	read(db->file_descriptor,&key_size,sizeof(int));
-
+	
 	// Get data_size
 	read(db->file_descriptor,&data_size,sizeof(int));
-
+	
 	// Get hash_size
 	read(db->file_descriptor,&hash_size,sizeof(int));
 	
@@ -64,7 +64,7 @@ DB_FILE *db_open( char *file_name )
 	// Calculate record_size
 	// Record looks like: Hash - link - key - data
 	db->record_size = sizeof(int)*2 + db->key_size + data_size;
-
+	
 	return db;
 }
 

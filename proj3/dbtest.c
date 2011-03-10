@@ -17,32 +17,32 @@
 #include "db.h" 
 int main(void) 
 {	
-DB_FILE *dbp;
-char buf[100]; 
-char buf2[20]; 
-db_create( "my_data_base", 20, 100, 3 ); 
-dbp = db_open( "my_data_base" ); 
-strcpy( buf, "This is the record for Ms. Smith." );
-db_write( dbp, "SMITH929-1517", buf );
-strcpy( buf, "This is the record for Mr. Johnson." );
-db_write( dbp, "JOHNSON622-9876", buf );
-strcpy( buf, "This is the new record for Ms. Smith." );
-db_write( dbp, "SMITH929-1517", buf );
-db_read( dbp, "SMITH929-1517", buf );
-printf( "This should be the new record for Ms. Smith: %s\n", buf );
-db_read( dbp, "JOHNSON622-9876", buf );
-printf( "This should be the record for Mr. Johnson: %s\n", buf );
-printf( "This read should return 1: %d\n", db_read( dbp, "JUNK", buf ) );
-
-// Start scan
-db_begin_scan( dbp );
-db_read_next( dbp, buf2, buf );		
-printf( "Next record: %s, %s\n", buf2, buf );
-db_read_next( dbp, buf2, buf );		
-printf( "Next next record: %s, %s\n", buf2, buf );
-db_read_next( dbp, buf2, buf );		
-printf( "Next next next record: %s, %s\n", buf2, buf );
-db_read_next( dbp, buf2, buf );		
-printf( "Next next next next record: %s, %s\n", buf2, buf );
-db_close (dbp);									
+	DB_FILE *dbp;
+	char buf[100]; 
+	char buf2[20]; 
+	db_create( "my_data_base", 20, 100, 3 ); 
+	dbp = db_open( "my_data_base" ); 
+	strcpy( buf, "This is the record for Ms. Smith." );
+	db_write( dbp, "SMITH929-1517", buf );
+	strcpy( buf, "This is the record for Mr. Johnson." );
+	db_write( dbp, "JOHNSON622-9876", buf );
+	strcpy( buf, "This is the new record for Ms. Smith." );
+	db_write( dbp, "SMITH929-1517", buf );
+	db_read( dbp, "SMITH929-1517", buf );
+	printf( "This should be the new record for Ms. Smith: %s\n", buf );
+	db_read( dbp, "JOHNSON622-9876", buf );
+	printf( "This should be the record for Mr. Johnson: %s\n", buf );
+	printf( "This read should return 1: %d\n", db_read( dbp, "JUNK", buf ) );
+	
+	// Start scan
+	db_begin_scan( dbp );
+	db_read_next( dbp, buf2, buf );		
+	printf( "Next record: %s, %s\n", buf2, buf );
+	db_read_next( dbp, buf2, buf );		
+	printf( "Next next record: %s, %s\n", buf2, buf );
+	db_read_next( dbp, buf2, buf );		
+	printf( "Next next next record: %s, %s\n", buf2, buf );
+	db_read_next( dbp, buf2, buf );		
+	printf( "Next next next next record: %s, %s\n", buf2, buf );
+	db_close (dbp);									
 }

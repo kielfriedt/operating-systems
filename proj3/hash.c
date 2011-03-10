@@ -27,7 +27,7 @@ int hash(char *key, int hash_size)
     int i;
     unsigned int hash = 0;
     unsigned char *p;
-
+	
     // Hash calc
     for(i=0, p=(unsigned char *)key; *p != '\0'; i++,p++) 
     {

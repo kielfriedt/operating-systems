@@ -19,25 +19,25 @@
  *	Name: Ellen Porter, Andrew Johnson, Kiel Friedt
  *	Date: Feb, 19 2010
  *
-*/
+ */
 #include "db.h"
 
 int db_read( DB_FILE *db_fp, char *key, void *data )
 {
 	int pfd;
 	//while( open( db_fp->lock_file , O_CREAT | O_EXCL | O_RDWR,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) == -1 )
-//	while((pfd = open("myBigFile.lck", O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
+	//	while((pfd = open("myBigFile.lck", O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1)
 	//{
 	//	fprintf(stderr, "Cannot open /etc/ptmp. Try again later.\n");
 	//	sleep(1);
 	//}
-
-
+	
+	
 	int r, link, rec_hash;
 	long int location;
 	char rec_key[DB_KEY_MAX];
 	char rec_data[db_fp->data_size];
-
+	
 	
 	// Turn key into a hash value
 	int hash_value = hash(key, db_fp->hash_size);
@@ -53,17 +53,17 @@ int db_read( DB_FILE *db_fp, char *key, void *data )
 	// There was an error reading hash value
 	if(hash_value != rec_hash)
 	{
-	close(pfd);
+		close(pfd);
 		remove("myBigFile.lck");
 		return -1;
 	}	
-
+	
 	// Read link
 	read(db_fp->file_descriptor, &link, sizeof(int));
-		
+	
 	// Read key
 	read(db_fp->file_descriptor,&rec_key,DB_KEY_MAX);
-
+	
 	// Check the inital record
 	r = strcmp(rec_key, key);
 	while(link != 0 && r != 0)
@@ -78,9 +78,9 @@ int db_read( DB_FILE *db_fp, char *key, void *data )
 		// Read key
 		read(db_fp->file_descriptor,&rec_key,DB_KEY_MAX);	
 		r = strcmp(rec_key, key);
-
+		
 	}	
-
+	
 	// We found the key before running out of links
 	if(r == 0)
 	{
@@ -90,10 +90,10 @@ int db_read( DB_FILE *db_fp, char *key, void *data )
 		remove("myBigFile.lck");
 		return 0;
 	}
-//close(pfd);
+	//close(pfd);
 	//remove("myBigFile.lck");
 	return 1;
-
+	
 }
 
 

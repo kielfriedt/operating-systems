@@ -20,7 +20,7 @@
  *	Date: Feb, 19 2010
  *
  *	Header file.  Defines the struct and functions
-*/
+ */
 
 #define DB_PATH_MAX 128
 #define DB_KEY_MAX 128 

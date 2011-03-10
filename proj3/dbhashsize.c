@@ -19,7 +19,7 @@
  *	Name: Ellen Porter, Andrew Johnson, Kiel Friedt
  *	Date: Feb, 19 2010
  *
-*/
+ */
 
 
 #include "db.h"

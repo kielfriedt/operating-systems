@@ -20,7 +20,7 @@
  *	Date: Feb, 19 2010
  *
  *	Stores the record key and data into given pointers.
-*/
+ */
 
 #include "db.h"
 
@@ -30,7 +30,7 @@ int db_read( DB_FILE *db_fp, char *key, void *data )
 	long int location;
 	char rec_key[db_fp->key_size];
 	char rec_data[db_fp->data_size];
-
+	
 	
 	// Turn key into a hash value
 	int hash_value = hash(key, db_fp->hash_size);
@@ -48,13 +48,13 @@ int db_read( DB_FILE *db_fp, char *key, void *data )
 	{
 		return -1;
 	}	
-
+	
 	// Read link
 	read(db_fp->file_descriptor, &link, sizeof(int));
-		
+	
 	// Read key
 	read(db_fp->file_descriptor,&rec_key,db_fp->key_size);
-
+	
 	// Check the inital record
 	r = strcmp(rec_key, key);
 	while(link != 0 && r != 0)
@@ -69,18 +69,18 @@ int db_read( DB_FILE *db_fp, char *key, void *data )
 		// Read key
 		read(db_fp->file_descriptor,&rec_key,db_fp->key_size);	
 		r = strcmp(rec_key, key);
-
+		
 	}	
-
+	
 	// We found the key before running out of links
 	if(r == 0)
 	{
 		read(db_fp->file_descriptor,data,db_fp->data_size);
 		return 0;
 	}
-
+	
 	return 1;
-
+	
 }
 
 

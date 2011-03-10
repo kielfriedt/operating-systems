@@ -20,7 +20,7 @@
  *	Date: Feb, 19 2010
  *
  *	Reads the next record.
-*/
+ */
 
 #include "db.h"
 
@@ -44,20 +44,20 @@ int db_read_next( DB_FILE *db_fp, char *key, void *data )
 	// While the key is empty...
 	while(r == 0)
 	{
-
+		
 		// Seek to that value
 		location = FILE_INFO + next*db_fp->record_size;
 		lseek( db_fp->file_descriptor,location, SEEK_SET);
-	
+		
 		// Read hash
 		read(db_fp->file_descriptor,&rec_hash,sizeof(int));
-
+		
 		// Read link
 		read(db_fp->file_descriptor, &link, sizeof(int));
 		
 		// Read key
 		read(db_fp->file_descriptor,key,db_fp->key_size);
-
+		
 		
 		// Checking if the key is empty
 		r = strcmp( key, "0" );	
@@ -73,11 +73,11 @@ int db_read_next( DB_FILE *db_fp, char *key, void *data )
 			return -1;
 		}
 	}
-
+	
 	// Write Data
 	read(db_fp->file_descriptor,data,db_fp->data_size);
 	db_fp->next = next;
-
+	
 	return 0;
 }
 

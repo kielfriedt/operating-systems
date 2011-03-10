@@ -20,7 +20,7 @@
  *	Date: Feb, 19 2010
  *
  *	Writes record to hash location.
-*/
+ */
 
 #include "db.h"
 
@@ -29,7 +29,7 @@ int findEndLink(DB_FILE *db_fp, int start);
 
 int db_write( DB_FILE *db_fp, char *key, void *data )
 {
-
+	
 	char * lockName = (char *) malloc(strlen(db_fp->file_name) +LOCK_EXT);
 	strcpy(lockName, db_fp->file_name);
 	lockName = strcat(lockName, ".LCK\0");
@@ -37,13 +37,13 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 	int pfd;
 	while((pfd =  open(lockName, O_CREAT | O_EXCL | O_RDWR, 0600)) == -1 )
 	{
-	    	if( errno==EEXIST || errno == EINTR  )
-	    	{
+		if( errno==EEXIST || errno == EINTR  )
+		{
 			sleep(1);
-     		}
-      		else 
+		}
+		else 
 	   	{
-            		return -1;
+			return -1;
 		}
 	} // End LOCK while
 	
@@ -53,7 +53,7 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 		remove(lockName);// remove the lock
 		return -1;
 	}
-
+	
 	//printf("%s has the lock\n", db_fp->lock_file);
 	int r, link, rec_hash;
 	int endofList, emptySpot;
@@ -78,18 +78,18 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 		remove(lockName);// remove the lock
 		return -1;
 	}	
-
+	
 	// Read link
 	read(db_fp->file_descriptor, &link, sizeof(int));
-		
+	
 	// Read key
 	read(db_fp->file_descriptor,&rec_key,db_fp->key_size);	
-        int prev_link = link;
+	int prev_link = link;
 	
 	/******* Check if we're updating a record ******/
-
+	
 	int rec_start = rec_hash;
-
+	
 	// Check the inital record
 	r = strcmp(rec_key, key);
 	while(link != 0 && r != 0)
@@ -105,7 +105,7 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 		read(db_fp->file_descriptor,&rec_key,db_fp->key_size);	
 		r = strcmp(rec_key, key);
 	}
-
+	
 	if(pfd >= 0)
 	{
 		// We're not updating a record
@@ -118,26 +118,26 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 			if(rec_start != emptySpot)
 			{	
 				// /******* Start Linking! ******/
-
+				
 				// Returns the hash of the last file in the linked list
 				
 				endofList = findEndLink(db_fp, rec_start);
 	  			emptySpot = lseek(db_fp->file_descriptor, 0, SEEK_END);
 				emptySpot = (emptySpot-FILE_INFO)/db_fp->record_size;
 				//emptySpot = findNextEmpty(db_fp, endofList);
-
+				
 				// lseek to the end of list
 				location = FILE_INFO + endofList*db_fp->record_size;
 				lseek( db_fp->file_descriptor,location, SEEK_SET);
 				// Rewrite hash
 				write(db_fp->file_descriptor, &endofList, sizeof(int));
-	                        //printf("Updating link at %d to %d\n", endofList, emptySpot);
+				//printf("Updating link at %d to %d\n", endofList, emptySpot);
 				write(db_fp->file_descriptor, &emptySpot, sizeof(int));
 				// set rec_hash to the empty record.
-			        rec_hash = emptySpot;
+				rec_hash = emptySpot;
 			}
-		  }
-			
+		}
+		
 		
 		// rec_hash should now be an empty record slot or spot we're updating
 		location = FILE_INFO + rec_hash*db_fp->record_size;
@@ -152,12 +152,12 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 		//printf("  Key: %s\n", key);
 		// Write the key
 		write(db_fp->file_descriptor, key, db_fp->key_size);
-	        //printf("  Data: %s\n", data); 
+		//printf("  Data: %s\n", data); 
 		// Write Data
 		write(db_fp->file_descriptor, data, db_fp->data_size );
 		
 	}
-<<<<<<< .mine
+	<<<<<<< .mine
 	
 	
 	// rec_hash should now be an empty record slot.
@@ -175,17 +175,17 @@ int db_write( DB_FILE *db_fp, char *key, void *data )
 	
 	// Write the key
 	write(db_fp->file_descriptor, key, DB_KEY_MAX);
-
+	
 	// Write Data
 	write(db_fp->file_descriptor, data, db_fp->data_size );
 	
 	remove(str3); // remove the lock
 	free(str3);
-=======
+	=======
 	// Remove the lock
 	close(pfd);
 	remove(lockName);
->>>>>>> .r38
+	>>>>>>> .r38
 	return 0;
 }
 
@@ -196,13 +196,13 @@ int findEndLink(DB_FILE *db_fp, int start)
 {
 	int link, hash;
 	long int location;
-<<<<<<< .mine
+	<<<<<<< .mine
 	link = 1;
 	while(link != 0)
-=======
-	int test = 1;
+		=======
+		int test = 1;
 	while(test != 0)
->>>>>>> .r38
+		>>>>>>> .r38
 	{
 		// lseek to start of record
 		location = FILE_INFO + start*db_fp->record_size;
@@ -210,7 +210,7 @@ int findEndLink(DB_FILE *db_fp, int start)
 		
 		// Read hash
 		read(db_fp->file_descriptor,&hash,sizeof(int));
-
+		
 		// Read link
 		read(db_fp->file_descriptor, &link, sizeof(int));
 		
@@ -245,14 +245,14 @@ int findNextEmpty(DB_FILE *db_fp, int start)
 		lseek( db_fp->file_descriptor,location, SEEK_SET);		
 		// Read hash
 		read(db_fp->file_descriptor,&hash,sizeof(int));
-
+		
 		// Read link
 		read(db_fp->file_descriptor, &link, sizeof(int));
 		
 		// Read key
 		char key[db_fp->key_size];
 		read(db_fp->file_descriptor,&key,db_fp->key_size);
-	
+		
 		
 		if( start >= db_fp->hash_size )
 		{

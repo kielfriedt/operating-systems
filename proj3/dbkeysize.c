@@ -20,7 +20,7 @@
  *	Date: Feb, 19 2010
  *
  *	Returns the key size.
-*/
+ */
 
 #include "db.h"
 
